@@ -1,0 +1,136 @@
+<div class="card">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h4>Services de l'hôpital: {{ hopital?.nom }}</h4>
+    <div>
+      <button class="btn btn-primary me-2" (click)="openServiceModal()">
+        <svg cIcon name="cilPlus" class="me-1"></svg> Ajouter un service
+      </button>
+      <button class="btn btn-secondary" (click)="goBack()">
+        <svg cIcon name="cilArrowLeft" class="me-1"></svg> Retour
+      </button>
+    </div>
+  </div>
+  
+  <div class="card-body">
+    <div *ngIf="services.length === 0" class="text-center py-3">
+      <p>Aucun service disponible pour cet hôpital.</p>
+    </div>
+
+    <div *ngFor="let service of services" class="mb-4">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="mb-0">
+          <a href="javascript:void(0)" (click)="service.idService !== undefined && toggleSousServices(service.idService)" class="text-decoration-none">
+            <svg cIcon [name]="service.idService !== undefined && expandedServices.includes(service.idService) ? 'cilChevronBottom' : 'cilChevronRight'" class="me-1"></svg>
+            {{ service.nom }}
+          </a>
+        </h5>
+        <div class="btn-group btn-group-sm">
+          <button class="btn btn-info me-1" (click)="openSousServiceModal(service)" title="Ajouter un sous-service">
+            <svg cIcon name="cilPlus"></svg>
+          </button>
+          <button class="btn btn-warning me-1" (click)="openServiceEditModal(service)" title="Modifier">
+            <svg cIcon name="cilPencil"></svg>
+          </button>
+          <button class="btn btn-danger" (click)="service.idService !== undefined && deleteService(service.idService)" title="Supprimer">
+            <svg cIcon name="cilTrash"></svg>
+          </button>
+        </div>
+      </div>
+      <p class="text-muted">{{ service.description }}</p>
+
+      <!-- Sous-services -->
+      <div *ngIf="service.idService !== undefined && expandedServices.includes(service.idService)" class="ms-4 mt-2">
+        <div *ngIf="!service.sousServicesDTO || service.sousServicesDTO.length === 0" class="text-muted mb-2">
+          Aucun sous-service disponible.
+        </div>
+
+        <div *ngFor="let sousService of service.sousServicesDTO" class="card mb-2">
+          <div class="card-body py-2">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="mb-0">{{ sousService.nom }}</h6>
+                <small class="text-muted">{{ sousService.description }}</small>
+              </div>
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-warning me-1" (click)="service.idService !== undefined && openSousServiceEditModal(service.idService, sousService)" title="Modifier">
+                  <svg cIcon name="cilPencil"></svg>
+                </button>
+                <button class="btn btn-danger" (click)="service.idService !== undefined && deleteSousService(service.idService, sousService.idSousService)" title="Supprimer">
+                  <svg cIcon name="cilTrash"></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal pour ajouter/modifier un service -->
+<div class="modal fade" id="serviceModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ editingService ? 'Modifier' : 'Ajouter' }} un service</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="serviceForm">
+          <div class="mb-3">
+            <label class="form-label">Nom</label>
+            <input type="text" class="form-control" formControlName="nom">
+            <div *ngIf="serviceForm.get('nom')?.invalid && serviceForm.get('nom')?.touched" class="text-danger">
+              Le nom est requis
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea class="form-control" formControlName="description" rows="3"></textarea>
+            <div *ngIf="serviceForm.get('description')?.invalid && serviceForm.get('description')?.touched" class="text-danger">
+              La description est requise
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <button type="button" class="btn btn-primary" (click)="saveService()" [disabled]="serviceForm.invalid">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal pour ajouter/modifier un sous-service -->
+<div class="modal fade" id="sousServiceModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ editingSousService ? 'Modifier' : 'Ajouter' }} un sous-service</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="sousServiceForm">
+          <div class="mb-3">
+            <label class="form-label">Nom</label>
+            <input type="text" class="form-control" formControlName="nom">
+            <div *ngIf="sousServiceForm.get('nom')?.invalid && sousServiceForm.get('nom')?.touched" class="text-danger">
+              Le nom est requis
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea class="form-control" formControlName="description" rows="3"></textarea>
+            <div *ngIf="sousServiceForm.get('description')?.invalid && sousServiceForm.get('description')?.touched" class="text-danger">
+              La description est requise
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <button type="button" class="btn btn-primary" (click)="saveSousService()" [disabled]="sousServiceForm.invalid">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,74 @@
+<div class="card">
+  <div class="card-header">
+    <h4>{{ isEditMode ? 'Modifier' : 'Ajouter' }} un Hôpital</h4>
+  </div>
+  <div class="card-body">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="mb-3">
+        <label class="form-label">Nom</label>
+        <input type="text" class="form-control" formControlName="nom">
+        <div *ngIf="form.get('nom')?.invalid && form.get('nom')?.touched" class="text-danger">
+          Le nom est requis
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Adresse</label>
+        <input type="text" class="form-control" formControlName="adresse">
+        <div *ngIf="form.get('adresse')?.invalid && form.get('adresse')?.touched" class="text-danger">
+          L'adresse est requise
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Région</label>
+        <select class="form-select" formControlName="regionId">
+          <option value="">Sélectionnez une région</option>
+          <option *ngFor="let region of regions" [value]="region.idRegion">{{ region.nom }}</option>
+        </select>
+        <div *ngIf="form.get('regionId')?.invalid && form.get('regionId')?.touched" class="text-danger">
+          La région est requise
+        </div>
+      </div>
+
+      <div class="mb-3" *ngIf="form.get('regionId')?.value">
+        <label class="form-label">Type de localisation</label>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" formControlName="locationType" value="province" id="provinceType">
+          <label class="form-check-label" for="provinceType">
+            Province
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" formControlName="locationType" value="prefecture" id="prefectureType">
+          <label class="form-check-label" for="prefectureType">
+            Préfecture
+          </label>
+        </div>
+      </div>
+
+      <div class="mb-3" *ngIf="selectedLocationType === 'province' && provinces.length > 0">
+        <label class="form-label">Province</label>
+        <select class="form-select" formControlName="provinceId">
+          <option value="">Sélectionnez une province</option>
+          <option *ngFor="let province of provinces" [value]="province.idProvince">{{ province.nom }}</option>
+        </select>
+      </div>
+
+      <div class="mb-3" *ngIf="selectedLocationType === 'prefecture' && prefectures.length > 0">
+        <label class="form-label">Préfecture</label>
+        <select class="form-select" formControlName="prefectureId">
+          <option value="">Sélectionnez une préfecture</option>
+          <option *ngFor="let prefecture of prefectures" [value]="prefecture.idPrefecture">{{ prefecture.nom }}</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn btn-primary" [disabled]="form.invalid">
+        {{ isEditMode ? 'Mettre à jour' : 'Enregistrer' }}
+      </button>
+      <button type="button" class="btn btn-secondary ms-2" routerLink="/hopitaux">
+        Annuler
+      </button>
+    </form>
+  </div>
+</div>

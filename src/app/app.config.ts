@@ -8,9 +8,11 @@ import {
   withRouterConfig,
   withViewTransitions
 } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
 
 import { DropdownModule, SidebarModule } from '@coreui/angular';
-import { IconSetService } from '@coreui/icons-angular';
+import { IconModule, IconSetService } from '@coreui/icons-angular';
+import { iconSubset } from './icons/icon-subset';
 import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
@@ -27,8 +29,16 @@ export const appConfig: ApplicationConfig = {
       withViewTransitions(),
       withHashLocation()
     ),
-    importProvidersFrom(SidebarModule, DropdownModule),
-    IconSetService,
+    provideHttpClient(),
+    importProvidersFrom(SidebarModule, DropdownModule, IconModule),
+    {
+      provide: IconSetService,
+      useFactory: () => {
+        const service = new IconSetService();
+        service.icons = { ...iconSubset };
+        return service;
+      }
+    },
     provideAnimationsAsync()
   ]
 };

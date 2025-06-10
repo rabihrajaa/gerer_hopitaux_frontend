@@ -11,6 +11,7 @@ import { iconSubset } from './icons/icon-subset';
 @Component({
     selector: 'app-root',
     template: '<router-outlet />',
+    standalone: true,
     imports: [RouterOutlet]
 })
 export class AppComponent implements OnInit {

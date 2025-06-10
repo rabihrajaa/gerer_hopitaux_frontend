@@ -2,25 +2,20 @@ import { INavData } from '@coreui/angular';
 
 export const navItems: INavData[] = [
   {
-    name: 'Buttons',
-    url: '/buttons',
+    name: 'Hopitaux',
+    url: '/hopitaux',
     iconComponent: { name: 'cil-cursor' },
     children: [
       {
-        name: 'Buttons',
-        url: '/buttons/buttons',
+        name: 'Liste des Hopitaux',
+        url: '/hopitaux/hopitaux',
         icon: 'nav-icon-bullet'
       },
       {
-        name: 'Button groups',
-        url: '/buttons/button-groups',
+        name: 'Ajouter Hopital',
+        url: '/hopitaux/ajouter',
         icon: 'nav-icon-bullet'
       },
-      {
-        name: 'Dropdowns',
-        url: '/buttons/dropdowns',
-        icon: 'nav-icon-bullet'
-      }
     ]
   }
 ];
